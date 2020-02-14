@@ -17,6 +17,8 @@ defmodule XpendrWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+    resources "/users", UserController
+    resources "/wallets", WalletController
   end
 
   # Other scopes may use custom stacks.

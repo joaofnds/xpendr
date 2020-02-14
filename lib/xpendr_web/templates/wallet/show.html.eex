@@ -1,0 +1,28 @@
+<h1>Show Wallet</h1>
+
+<ul>
+
+  <li>
+    <strong>Owner:</strong>
+    <%= owner_name(@wallet) %>
+  </li>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @wallet.name %>
+  </li>
+
+  <li>
+    <strong>Balance:</strong>
+    <%= @wallet.balance %>
+  </li>
+
+  <li>
+    <strong>Description:</strong>
+    <%= @wallet.description %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.wallet_path(@conn, :edit, @wallet) %></span>
+<span><%= link "Back", to: Routes.wallet_path(@conn, :index) %></span>
