@@ -1,22 +1,22 @@
 defmodule XpendrWeb.WalletControllerTest do
   use XpendrWeb.ConnCase
 
-  alias Xpendr.{Finance, Accounts}
+  alias Xpendr.Finance
 
   @create_attrs %{balance: 42, description: "some description", name: "some name"}
   @update_attrs %{balance: 43, description: "some updated description", name: "some updated name"}
   @invalid_attrs %{balance: nil, description: nil, name: nil}
 
   def fixture(:user) do
-    {:ok, user} = Accounts.create_user(%{name: "some name", username: "some username"})
-    user
+    insert!(:user)
   end
 
   def fixture(:wallet) do
     {:ok, wallet} =
       @create_attrs
-      |> Enum.into(%{ user_id: fixture(:user).id })
+      |> Map.merge(%{ user_id: fixture(:user).id })
       |> Finance.create_wallet()
+
     wallet
   end
 
@@ -39,7 +39,7 @@ defmodule XpendrWeb.WalletControllerTest do
       conn = post(
         conn,
         Routes.wallet_path(conn, :create),
-        wallet: Enum.into(@create_attrs, %{ user_id: fixture(:user).id }))
+        wallet: Map.merge(@create_attrs, %{ user_id: fixture(:user).id }))
 
       assert %{id: id} = redirected_params(conn)
       assert redirected_to(conn) == Routes.wallet_path(conn, :show, id)
