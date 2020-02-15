@@ -19,6 +19,7 @@ defmodule XpendrWeb.Router do
     get "/", PageController, :index
     resources "/users", UserController
     resources "/wallets", WalletController
+    resources "/transactions", TransactionController
   end
 
   # Other scopes may use custom stacks.

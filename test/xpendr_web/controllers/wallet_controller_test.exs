@@ -14,7 +14,7 @@ defmodule XpendrWeb.WalletControllerTest do
   def fixture(:wallet) do
     {:ok, wallet} =
       @create_attrs
-      |> Map.merge(%{ user_id: fixture(:user).id })
+      |> Map.merge(%{user_id: fixture(:user).id})
       |> Finance.create_wallet()
 
     wallet
@@ -36,10 +36,12 @@ defmodule XpendrWeb.WalletControllerTest do
 
   describe "create wallet" do
     test "redirects to show when data is valid", %{conn: conn} do
-      conn = post(
-        conn,
-        Routes.wallet_path(conn, :create),
-        wallet: Map.merge(@create_attrs, %{ user_id: fixture(:user).id }))
+      conn =
+        post(
+          conn,
+          Routes.wallet_path(conn, :create),
+          wallet: Map.merge(@create_attrs, %{user_id: fixture(:user).id})
+        )
 
       assert %{id: id} = redirected_params(conn)
       assert redirected_to(conn) == Routes.wallet_path(conn, :show, id)
@@ -86,6 +88,7 @@ defmodule XpendrWeb.WalletControllerTest do
     test "deletes chosen wallet", %{conn: conn, wallet: wallet} do
       conn = delete(conn, Routes.wallet_path(conn, :delete, wallet))
       assert redirected_to(conn) == Routes.wallet_path(conn, :index)
+
       assert_error_sent 404, fn ->
         get(conn, Routes.wallet_path(conn, :show, wallet))
       end

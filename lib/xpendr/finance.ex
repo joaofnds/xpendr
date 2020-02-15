@@ -20,7 +20,7 @@ defmodule Xpendr.Finance do
   def list_wallets do
     Wallet
     |> Repo.all()
-    |> Repo.preload(:user)
+    |> Repo.preload([:user, :transactions])
   end
 
   @doc """
@@ -40,9 +40,8 @@ defmodule Xpendr.Finance do
   def get_wallet!(id) do
     Wallet
     |> Repo.get!(id)
-    |> Repo.preload(:user)
+    |> Repo.preload([:user, :transactions])
   end
-
 
   @doc """
   Creates a wallet.
@@ -80,6 +79,18 @@ defmodule Xpendr.Finance do
     |> Repo.update()
   end
 
+  def inc_wallet_balance(wallet_id, amount) when amount > 0 do
+    {1, [%Wallet{}]} =
+      from(w in Wallet, where: w.id == ^wallet_id, select: [:balance])
+      |> Repo.update_all(inc: [balance: amount])
+  end
+
+  def dec_wallet_balance(wallet_id, amount) when amount > 0 do
+    {1, [%Wallet{}]} =
+      from(w in Wallet, where: w.id == ^wallet_id, select: [:balance])
+      |> Repo.update_all(inc: [balance: -amount])
+  end
+
   @doc """
   Deletes a wallet.
 
@@ -107,5 +118,140 @@ defmodule Xpendr.Finance do
   """
   def change_wallet(%Wallet{} = wallet) do
     Wallet.changeset(wallet, %{})
+  end
+
+  alias Xpendr.Finance.Transaction
+
+  @doc """
+  Returns the list of transactions.
+
+  ## Examples
+
+      iex> list_transactions()
+      [%Transaction{}, ...]
+
+  """
+  def list_transactions do
+    Transaction
+    |> Repo.all()
+    |> Repo.preload(wallet: :user)
+  end
+
+  @doc """
+  Gets a single transaction.
+
+  Raises `Ecto.NoResultsError` if the Transaction does not exist.
+
+  ## Examples
+
+      iex> get_transaction!(123)
+      %Transaction{}
+
+      iex> get_transaction!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_transaction!(id) do
+    Transaction
+    |> Repo.get!(id)
+    |> Repo.preload(wallet: :user)
+  end
+
+  @doc """
+  Creates a transaction.
+
+  ## Examples
+
+      iex> create_transaction(%{field: value})
+      {:ok, %Transaction{}}
+
+      iex> create_transaction(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_transaction(attrs \\ %{}) do
+    result =
+      %Transaction{}
+      |> Transaction.changeset(attrs)
+      |> Repo.insert()
+
+    case result do
+      {:ok, %Transaction{type: type, amount: amount, wallet_id: wallet_id}} ->
+        case type do
+          "income" ->
+            inc_wallet_balance(wallet_id, amount)
+
+          "expense" ->
+            dec_wallet_balance(wallet_id, amount)
+        end
+
+      _ ->
+        nil
+    end
+
+    result
+  end
+
+  @doc """
+  Updates a transaction.
+
+  ## Examples
+
+      iex> update_transaction(transaction, %{field: new_value})
+      {:ok, %Transaction{}}
+
+      iex> update_transaction(transaction, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_transaction(%Transaction{} = transaction, attrs) do
+    transaction
+    |> Transaction.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a transaction.
+
+  ## Examples
+
+      iex> delete_transaction(transaction)
+      {:ok, %Transaction{}}
+
+      iex> delete_transaction(transaction)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_transaction(%Transaction{} = transaction) do
+    result = Repo.delete(transaction)
+
+    case result do
+      {:ok, %Transaction{type: type, amount: amount, wallet_id: wallet_id}} ->
+        case type do
+          "income" ->
+            dec_wallet_balance(wallet_id, amount)
+
+          "expense" ->
+            inc_wallet_balance(wallet_id, amount)
+        end
+
+      {:error} ->
+        nil
+    end
+
+    result
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking transaction changes.
+
+  ## Examples
+
+      iex> change_transaction(transaction)
+      %Ecto.Changeset{source: %Transaction{}}
+
+  """
+  def change_transaction(%Transaction{} = transaction) do
+    Transaction.changeset(transaction, %{})
   end
 end

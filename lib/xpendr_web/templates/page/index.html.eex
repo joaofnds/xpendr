@@ -5,4 +5,7 @@
   <li>
     <a href="<%= Routes.wallet_path(@conn, :index) %>">wallets</a>
   </li>
+  <li>
+    <a href="<%= Routes.transaction_path(@conn, :index) %>">transactions</a>
+  </li>
 </ul>
