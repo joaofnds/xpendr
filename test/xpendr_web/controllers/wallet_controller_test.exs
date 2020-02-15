@@ -8,13 +8,15 @@ defmodule XpendrWeb.WalletControllerTest do
   @invalid_attrs %{balance: nil, description: nil, name: nil}
 
   def fixture(:user) do
-    insert!(:user)
+    insert(:user)
   end
 
   def fixture(:wallet) do
+    user = fixture(:user)
+
     {:ok, wallet} =
       @create_attrs
-      |> Map.merge(%{user_id: fixture(:user).id})
+      |> Map.merge(%{user_id: user.id})
       |> Finance.create_wallet()
 
     wallet

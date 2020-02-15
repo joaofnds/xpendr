@@ -4,7 +4,6 @@ defmodule Xpendr.Finance.Transaction do
   alias Xpendr.Finance.Wallet
 
   @types %{income: "income", expense: "expense"}
-
   def types, do: @types
 
   schema "transactions" do

@@ -3,7 +3,7 @@ defmodule XpendrWeb.UserView do
 
   alias Xpendr.Accounts.User
 
-  def wallets(%User{wallets: wallets} = user) do
+  def wallets(%User{wallets: wallets}) do
     wallets
   end
 end

@@ -8,7 +8,7 @@ defmodule XpendrWeb.TransactionControllerTest do
   @invalid_attrs %{amount: nil, description: nil, type: nil}
 
   def fixture(:transaction) do
-    wallet = build(:wallet_with_user)
+    wallet = insert(:wallet)
 
     {:ok, transaction} =
       @create_attrs
