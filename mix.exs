@@ -43,7 +43,9 @@ defmodule Xpendr.MixProject do
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
-      {:ex_machina, "~> 2.3", onley: :test}
+      {:ex_machina, "~> 2.3", onley: :test},
+      {:dialyxir, "~> 1.0.0-rc.7", only: :dev, runtime: false},
+      {:credo, "~> 1.2", only: :dev, runtime: false},
     ]
   end
 
@@ -57,7 +59,8 @@ defmodule Xpendr.MixProject do
     [
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.create --quiet", "ecto.migrate", "test"]
+      test: ["ecto.create --quiet", "ecto.migrate", "test"],
+      check: ["dialyzer", "credo"]
     ]
   end
 end
