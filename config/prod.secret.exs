@@ -30,17 +30,6 @@ config :xpendr, XpendrWeb.Endpoint,
   ],
   secret_key_base: secret_key_base
 
-secret_key =
-  System.get_env("SECRET_KEY") ||
-    raise """
-    environment variable SECRET_KEY is missing.
-    You can generate one by calling: mix guardian.gen.secret
-    """
-
-config :xpendr, AuthMe.UserManager.Guardian,
-  issuer: "xpendr",
-  secret_key: secret_key
-
 # ## Using releases (Elixir v1.9+)
 #
 # If you are doing OTP releases, you need to instruct Phoenix
