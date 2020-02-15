@@ -2,11 +2,13 @@ defmodule Xpendr.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
   alias Xpendr.Finance.Wallet
+  alias Xpendr.Accounts.Credential
 
   schema "users" do
     field :name, :string
     field :username, :string
     has_many :wallets, Wallet
+    has_one :credential, Credential
 
     timestamps()
   end
