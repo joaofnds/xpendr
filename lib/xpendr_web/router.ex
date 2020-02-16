@@ -1,5 +1,6 @@
 defmodule XpendrWeb.Router do
   use XpendrWeb, :router
+  use Pow.Phoenix.Router
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -13,13 +14,32 @@ defmodule XpendrWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :protected do
+    plug Pow.Plug.RequireAuthenticated,
+      error_handler: Pow.Phoenix.PlugErrorHandler
+  end
+
+  scope "/" do
+    pipe_through :browser
+
+    pow_routes()
+  end
+
   scope "/", XpendrWeb do
     pipe_through :browser
 
     get "/", PageController, :index
-    resources "/users", UserController
-    resources "/wallets", WalletController
-    resources "/transactions", TransactionController
+
+    scope "/" do
+      pipe_through :protected
+
+      resources "/users", UserController, except: [:index]
+      get "/user/show", UserController, :show
+      get "/user/edit", UserController, :edit
+      put "/user", UserController, :update
+      resources "/wallets", WalletController
+      resources "/transactions", TransactionController
+    end
   end
 
   # Other scopes may use custom stacks.
