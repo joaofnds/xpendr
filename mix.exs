@@ -46,6 +46,7 @@ defmodule Xpendr.MixProject do
       {:ex_machina, "~> 2.3", onley: :test},
       {:dialyxir, "~> 1.0.0-rc.7", only: :dev, runtime: false},
       {:credo, "~> 1.2", only: :dev, runtime: false},
+      {:pow, "~> 1.0"}
     ]
   end
 

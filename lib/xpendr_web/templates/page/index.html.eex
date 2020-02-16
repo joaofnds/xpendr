@@ -1,6 +1,6 @@
 <ul>
   <li>
-    <a href="<%= Routes.user_path(@conn, :index) %>">users</a>
+    <a href="<%= Routes.user_path(@conn, :show) %>">users</a>
   </li>
   <li>
     <a href="<%= Routes.wallet_path(@conn, :index) %>">wallets</a>
