@@ -3,10 +3,7 @@ defmodule XpendrWeb.UserController do
 
   alias Xpendr.Accounts
   alias Xpendr.Accounts.User
-
-  def current_user(%Plug.Conn{assigns: %{current_user: current_user}}) do
-    if current_user, do: Accounts.get_user!(current_user.user_id)
-  end
+  import XpendrWeb.Session
 
   def new(conn, _params) do
     changeset = Accounts.change_user(%User{})
