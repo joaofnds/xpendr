@@ -61,6 +61,29 @@ defmodule Xpendr.Accounts do
     |> Repo.insert()
   end
 
+  def create_credential(attrs \\ %{}) do
+    case Pow.Plug.create_user(attrs["conn"], attrs) do
+      {:ok, credentials, _} ->
+        {:ok, credentials}
+
+      {:error, changeset, _} ->
+        Repo.rollback(changeset)
+        {:error, changeset}
+    end
+  end
+
+  def create_user_with_credential(attrs \\ %{}) do
+    Repo.transaction(fn ->
+      case create_user(attrs) do
+        {:ok, user} ->
+          create_credential(Map.put(attrs, "user_id", user.id))
+
+        {:error, changeset} ->
+          Repo.rollback(changeset)
+      end
+    end)
+  end
+
   @doc """
   Updates a user.
 
