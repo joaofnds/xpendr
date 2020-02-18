@@ -1,11 +1,14 @@
 defmodule XpendrWeb.WalletController do
   use XpendrWeb, :controller
 
+  import XpendrWeb.Session
+
   alias Xpendr.Finance
   alias Xpendr.Finance.Wallet
 
   def index(conn, _params) do
-    wallets = Finance.list_wallets()
+    user = current_user(conn)
+    wallets = Finance.user_wallets(user.id)
     render(conn, "index.html", wallets: wallets)
   end
 
@@ -15,7 +18,12 @@ defmodule XpendrWeb.WalletController do
   end
 
   def create(conn, %{"wallet" => wallet_params}) do
-    case Finance.create_wallet(wallet_params) do
+    user = current_user(conn)
+
+    wallet_params
+    |> Map.put("user_id", user.id)
+    |> Finance.create_wallet()
+    |> case do
       {:ok, wallet} ->
         conn
         |> put_flash(:info, "Wallet created successfully.")
@@ -26,8 +34,9 @@ defmodule XpendrWeb.WalletController do
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    wallet = Finance.get_wallet!(id)
+  def show(conn, %{"id" => wallet_id}) do
+    user = current_user(conn)
+    wallet = Finance.get_wallet!(user.id, wallet_id)
     render(conn, "show.html", wallet: wallet)
   end
 

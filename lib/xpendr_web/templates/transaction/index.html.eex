@@ -3,6 +3,7 @@
 <table>
   <thead>
     <tr>
+      <th>Wallet</th>
       <th>Type</th>
       <th>Amount</th>
       <th>Description</th>
@@ -13,6 +14,7 @@
   <tbody>
 <%= for transaction <- @transactions do %>
     <tr>
+      <td><%= wallet_name(transaction) %></td>
       <td><%= transaction.type %></td>
       <td><%= transaction.amount %></td>
       <td><%= transaction.description %></td>

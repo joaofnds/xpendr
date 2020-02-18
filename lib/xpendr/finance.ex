@@ -1,78 +1,36 @@
 defmodule Xpendr.Finance do
-  @moduledoc """
-  The Finance context.
-  """
+  import Ecto.Query
 
-  import Ecto.Query, warn: false
   alias Xpendr.Repo
-
   alias Xpendr.Finance.Wallet
 
-  @doc """
-  Returns the list of wallets.
+  def user_wallets_query(user_id) do
+    where(Wallet, user_id: ^user_id)
+  end
 
-  ## Examples
+  def wallet_transactions(wallet_id) do
+    where(Transaction, wallet_id: ^wallet_id)
+  end
 
-      iex> list_wallets()
-      [%Wallet{}, ...]
-
-  """
-  def list_wallets do
-    Wallet
+  def user_wallets(user_id) do
+    user_wallets_query(user_id)
     |> Repo.all()
     |> Repo.preload([:user, :transactions])
   end
 
-  @doc """
-  Gets a single wallet.
-
-  Raises `Ecto.NoResultsError` if the Wallet does not exist.
-
-  ## Examples
-
-      iex> get_wallet!(123)
-      %Wallet{}
-
-      iex> get_wallet!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_wallet!(id) do
+  def get_wallet!(user_id, wallet_id) do
     Wallet
-    |> Repo.get!(id)
+    |> Ecto.Query.where(user_id: ^user_id, id: ^wallet_id)
+    |> Repo.one!()
     |> Repo.preload([:user, :transactions])
   end
 
-  @doc """
-  Creates a wallet.
-
-  ## Examples
-
-      iex> create_wallet(%{field: value})
-      {:ok, %Wallet{}}
-
-      iex> create_wallet(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
   def create_wallet(attrs \\ %{}) do
     %Wallet{}
     |> Wallet.changeset(attrs)
     |> Repo.insert()
   end
 
-  @doc """
-  Updates a wallet.
-
-  ## Examples
-
-      iex> update_wallet(wallet, %{field: new_value})
-      {:ok, %Wallet{}}
-
-      iex> update_wallet(wallet, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
   def update_wallet(%Wallet{} = wallet, attrs) do
     wallet
     |> Wallet.changeset(attrs)
@@ -91,92 +49,39 @@ defmodule Xpendr.Finance do
       |> Repo.update_all(inc: [balance: -amount])
   end
 
-  @doc """
-  Deletes a wallet.
-
-  ## Examples
-
-      iex> delete_wallet(wallet)
-      {:ok, %Wallet{}}
-
-      iex> delete_wallet(wallet)
-      {:error, %Ecto.Changeset{}}
-
-  """
   def delete_wallet(%Wallet{} = wallet) do
     Repo.delete(wallet)
   end
 
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking wallet changes.
-
-  ## Examples
-
-      iex> change_wallet(wallet)
-      %Ecto.Changeset{source: %Wallet{}}
-
-  """
   def change_wallet(%Wallet{} = wallet) do
     Wallet.changeset(wallet, %{})
   end
 
   alias Xpendr.Finance.Transaction
 
-  @doc """
-  Returns the list of transactions.
-
-  ## Examples
-
-      iex> list_transactions()
-      [%Transaction{}, ...]
-
-  """
-  def list_transactions do
-    Transaction
+  def list_transactions(user_id) do
+    from(w in Wallet,
+      join: t in Transaction,
+      on: [wallet_id: w.id],
+      where: w.user_id == ^user_id,
+      select: t
+    )
     |> Repo.all()
     |> Repo.preload(wallet: :user)
   end
 
-  @doc """
-  Gets a single transaction.
-
-  Raises `Ecto.NoResultsError` if the Transaction does not exist.
-
-  ## Examples
-
-      iex> get_transaction!(123)
-      %Transaction{}
-
-      iex> get_transaction!(456)
-      ** (Ecto.NoResultsError)
-
-  """
   def get_transaction!(id) do
     Transaction
     |> Repo.get!(id)
     |> Repo.preload(wallet: :user)
   end
 
-  @doc """
-  Creates a transaction.
-
-  ## Examples
-
-      iex> create_transaction(%{field: value})
-      {:ok, %Transaction{}}
-
-      iex> create_transaction(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_transaction(attrs \\ %{}) do
-    result =
-      %Transaction{}
-      |> Transaction.changeset(attrs)
-      |> Repo.insert()
-
-    case result do
-      {:ok, %Transaction{type: type, amount: amount, wallet_id: wallet_id}} ->
+  def create_transaction(user_id, attrs \\ %{}) do
+    %Transaction{}
+    |> Transaction.changeset(attrs)
+    |> Repo.insert()
+    |> case do
+      {:ok, %Transaction{type: type, amount: amount, wallet_id: wallet_id} = transaction} ->
         case type do
           "income" ->
             inc_wallet_balance(wallet_id, amount)
@@ -185,11 +90,11 @@ defmodule Xpendr.Finance do
             dec_wallet_balance(wallet_id, amount)
         end
 
+        {:ok, transaction}
+
       _ ->
         nil
     end
-
-    result
   end
 
   @doc """
