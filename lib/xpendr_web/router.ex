@@ -10,40 +10,44 @@ defmodule XpendrWeb.Router do
     plug :put_secure_browser_headers
   end
 
-  pipeline :api do
-    plug :accepts, ["json"]
-  end
-
   pipeline :protected do
-    plug Pow.Plug.RequireAuthenticated,
-      error_handler: Pow.Phoenix.PlugErrorHandler
+    plug Pow.Plug.RequireAuthenticated, error_handler: XpendrWeb.AuthErrorHandler
   end
 
-  scope "/" do
-    pipe_through :browser
-
-    pow_routes()
+  pipeline :not_authenticated do
+    plug Pow.Plug.RequireNotAuthenticated, error_handler: XpendrWeb.AuthErrorHandler
   end
 
   scope "/", XpendrWeb do
     pipe_through :browser
 
     get "/", PageController, :index
-
-    scope "/" do
-      pipe_through :protected
-
-      resources "/users", UserController, except: [:index]
-      get "/user/show", UserController, :show
-      get "/user/edit", UserController, :edit
-      put "/user", UserController, :update
-      resources "/wallets", WalletController
-      resources "/transactions", TransactionController
-    end
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", XpendrWeb do
-  #   pipe_through :api
-  # end
+  scope "/", XpendrWeb do
+    pipe_through [:browser]
+
+    get "/signup", RegistrationController, :new, as: :signup
+    post "/signup", RegistrationController, :create, as: :signup
+    get "/login", SessionController, :new, as: :login
+    post "/login", SessionController, :create, as: :login
+    delete "/login", SessionController, :delete, as: :login
+  end
+
+  scope "/", XpendrWeb do
+    pipe_through [:browser, :protected]
+
+    resources "/users", UserController, except: [:index]
+    get "/user/show", UserController, :show
+    get "/user/edit", UserController, :edit
+    put "/user", UserController, :update
+    resources "/wallets", WalletController
+    resources "/transactions", TransactionController
+  end
+
+  scope "/", XpendrWeb do
+    pipe_through [:browser, :protected]
+
+    delete "/logout", SessionController, :delete, as: :logout
+  end
 end

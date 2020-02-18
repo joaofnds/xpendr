@@ -17,10 +17,10 @@
         <h1>Xpendr</h1>
       </a>
       <%= if Pow.Plug.current_user(@conn) do %>
-      <span><%= link "Sign out", to: Routes.pow_session_path(@conn, :delete), method: :delete %></span>
+      <span><%= link "Sign out", to: Routes.login_path(@conn, :delete), method: :delete %></span>
       <% else %>
-      <span><%= link "Register", to: Routes.pow_registration_path(@conn, :new) %></span>
-      <span><%= link "Sign in", to: Routes.pow_session_path(@conn, :new) %></span>
+      <span><%= link "Register", to: Routes.signup_path(@conn, :new) %></span>
+      <span><%= link "Sign in", to: Routes.login_path(@conn, :new) %></span>
       <% end %>
     </section>
   </header>
