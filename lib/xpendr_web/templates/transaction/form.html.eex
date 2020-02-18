@@ -6,11 +6,11 @@
   <% end %>
 
   <%= label f, :wallet_id %>
-  <%= text_input f, :wallet_id %>
+  <%= wallet_select f, :wallet_id, @wallets %>
   <%= error_tag f, :wallet_id %>
 
   <%= label f, :type %>
-  <%= text_input f, :type %>
+  <%= transaction_select f, :type %>
   <%= error_tag f, :type %>
 
   <%= label f, :amount %>
