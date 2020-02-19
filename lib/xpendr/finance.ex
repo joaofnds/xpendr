@@ -76,7 +76,7 @@ defmodule Xpendr.Finance do
     |> Repo.preload(wallet: :user)
   end
 
-  def create_transaction(user_id, attrs \\ %{}) do
+  def create_transaction(_user_id, attrs \\ %{}) do
     %Transaction{}
     |> Transaction.changeset(attrs)
     |> Repo.insert()
@@ -97,36 +97,12 @@ defmodule Xpendr.Finance do
     end
   end
 
-  @doc """
-  Updates a transaction.
-
-  ## Examples
-
-      iex> update_transaction(transaction, %{field: new_value})
-      {:ok, %Transaction{}}
-
-      iex> update_transaction(transaction, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
   def update_transaction(%Transaction{} = transaction, attrs) do
     transaction
     |> Transaction.changeset(attrs)
     |> Repo.update()
   end
 
-  @doc """
-  Deletes a transaction.
-
-  ## Examples
-
-      iex> delete_transaction(transaction)
-      {:ok, %Transaction{}}
-
-      iex> delete_transaction(transaction)
-      {:error, %Ecto.Changeset{}}
-
-  """
   def delete_transaction(%Transaction{} = transaction) do
     result = Repo.delete(transaction)
 
@@ -147,15 +123,6 @@ defmodule Xpendr.Finance do
     result
   end
 
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking transaction changes.
-
-  ## Examples
-
-      iex> change_transaction(transaction)
-      %Ecto.Changeset{source: %Transaction{}}
-
-  """
   def change_transaction(%Transaction{} = transaction) do
     Transaction.changeset(transaction, %{})
   end
