@@ -1,27 +1,24 @@
 defmodule XpendrWeb.TransactionController do
   use XpendrWeb, :controller
 
-  import XpendrWeb.Session
-
-  alias Xpendr.Repo
   alias Xpendr.Finance
-  alias Xpendr.Finance.{Transaction, Wallet}
+  alias Xpendr.Finance.Transaction
 
   def index(conn, _params) do
-    user = current_user(conn)
+    user = conn.assigns.current_user
     transactions = Finance.list_transactions(user.id)
     render(conn, "index.html", transactions: transactions)
   end
 
   def new(conn, _params) do
-    user = current_user(conn)
+    user = conn.assigns.current_user
     wallets = Finance.user_wallets(user.id)
     changeset = Finance.change_transaction(%Transaction{})
     render(conn, "new.html", wallets: wallets, changeset: changeset)
   end
 
   def create(conn, %{"transaction" => transaction_params}) do
-    user = current_user(conn)
+    user = conn.assigns.current_user
 
     case Finance.create_transaction(user.id, transaction_params) do
       {:ok, transaction} ->
@@ -40,7 +37,7 @@ defmodule XpendrWeb.TransactionController do
   end
 
   def edit(conn, %{"id" => id}) do
-    user = current_user(conn)
+    user = conn.assigns.current_user
     wallets = Finance.user_wallets(user.id)
     transaction = Finance.get_transaction!(id)
     changeset = Finance.change_transaction(transaction)
