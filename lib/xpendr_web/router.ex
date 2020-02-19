@@ -9,21 +9,29 @@ defmodule XpendrWeb.Router do
     plug :put_secure_browser_headers
   end
 
-  pipeline :api do
-    plug :accepts, ["json"]
+  pipeline :auth do
+    plug XpendrWeb.SessionManager.Pipeline
+  end
+
+  pipeline :ensure_auth do
+    plug Guardian.Plug.EnsureAuthenticated
   end
 
   scope "/", XpendrWeb do
-    pipe_through :browser
+    pipe_through [:browser, :auth]
 
     get "/", PageController, :index
+
+    get "/login", SessionController, :new
+    post "/login", SessionController, :login
+    get "/logout", SessionController, :logout
+  end
+
+  scope "/", XpendrWeb do
+    pipe_through [:browser, :auth, :ensure_auth]
+
     resources "/users", UserController
     resources "/wallets", WalletController
     resources "/transactions", TransactionController
   end
-
-  # Other scopes may use custom stacks.
-  # scope "/api", XpendrWeb do
-  #   pipe_through :api
-  # end
 end

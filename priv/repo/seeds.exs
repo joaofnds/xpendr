@@ -19,6 +19,12 @@ alias Xpendr.Finance
     username: "joaofnds"
   })
 
+{:ok, credential} =
+  Accounts.create_credential(%{
+    user_id: user.id,
+    password: "asdfasdfasdf"
+  })
+
 {:ok, wallet} =
   Finance.create_wallet(%{
     user_id: user.id,
@@ -26,7 +32,7 @@ alias Xpendr.Finance
   })
 
 {:ok, _} =
-  Finance.create_transaction(%{
+  Finance.create_transaction(nil, %{
     wallet_id: wallet.id,
     type: "income",
     amount: 10_00

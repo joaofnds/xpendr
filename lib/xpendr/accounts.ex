@@ -2,7 +2,7 @@ defmodule Xpendr.Accounts do
   import Ecto.Query, warn: false
   alias Xpendr.Repo
 
-  alias Xpendr.Accounts.User
+  alias Xpendr.Accounts.{User, Encryption}
 
   def list_users do
     User
@@ -22,22 +22,20 @@ defmodule Xpendr.Accounts do
     |> Repo.insert()
   end
 
-  def create_credential(attrs \\ %{}) do
-    case Pow.Plug.create_user(attrs["conn"], attrs) do
-      {:ok, credentials, _} ->
-        {:ok, credentials}
-
-      {:error, changeset, _} ->
-        Repo.rollback(changeset)
-        {:error, changeset}
-    end
-  end
-
   def create_user_with_credential(attrs \\ %{}) do
     Repo.transaction(fn ->
       case create_user(attrs) do
         {:ok, user} ->
-          create_credential(Map.put(attrs, "user_id", user.id))
+          attrs
+          |> Map.put("user_id", user.id)
+          |> create_credential()
+          |> case do
+            {:ok, credential} ->
+              {:ok, credential}
+
+            {:error, changeset} ->
+              Repo.rollback(changeset)
+          end
 
         {:error, changeset} ->
           Repo.rollback(changeset)
@@ -64,15 +62,17 @@ defmodule Xpendr.Accounts do
   end
 
   def authenticate_user_with_password(username, plain_text_password) do
-    query = from u in User, where: u.username == ^username
-
-    case Repo.one(query) |> Repo.preload(:credential) do
+    User
+    |> where(username: ^username)
+    |> Repo.one()
+    |> Repo.preload(:credential)
+    |> case do
       nil ->
         Argon2.no_user_verify()
         {:error, :bad_credentials}
 
       user ->
-        if Argon2.verify_pass(plain_text_password, user.credential.password) do
+        if Encryption.check_password(plain_text_password, user.credential.password) do
           {:ok, user}
         else
           {:error, :bad_credentials}
@@ -82,102 +82,34 @@ defmodule Xpendr.Accounts do
 
   alias Xpendr.Accounts.Credential
 
-  @doc """
-  Returns the list of credentials.
-
-  ## Examples
-
-      iex> list_credentials()
-      [%Credential{}, ...]
-
-  """
   def list_credentials do
     Credential
     |> Repo.all()
     |> Repo.preload(:user)
   end
 
-  @doc """
-  Gets a single credential.
-
-  Raises `Ecto.NoResultsError` if the Credential does not exist.
-
-  ## Examples
-
-      iex> get_credential!(123)
-      %Credential{}
-
-      iex> get_credential!(456)
-      ** (Ecto.NoResultsError)
-
-  """
   def get_credential!(id) do
     Credential
     |> Repo.get!(id)
     |> Repo.preload(:user)
   end
 
-  @doc """
-  Creates a credential.
-
-  ## Examples
-
-      iex> create_credential(%{field: value})
-      {:ok, %Credential{}}
-
-      iex> create_credential(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
   def create_credential(attrs \\ %{}) do
     %Credential{}
     |> Credential.changeset(attrs)
     |> Repo.insert()
   end
 
-  @doc """
-  Updates a credential.
-
-  ## Examples
-
-      iex> update_credential(credential, %{field: new_value})
-      {:ok, %Credential{}}
-
-      iex> update_credential(credential, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
   def update_credential(%Credential{} = credential, attrs) do
     credential
     |> Credential.changeset(attrs)
     |> Repo.update()
   end
 
-  @doc """
-  Deletes a credential.
-
-  ## Examples
-
-      iex> delete_credential(credential)
-      {:ok, %Credential{}}
-
-      iex> delete_credential(credential)
-      {:error, %Ecto.Changeset{}}
-
-  """
   def delete_credential(%Credential{} = credential) do
     Repo.delete(credential)
   end
 
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking credential changes.
-
-  ## Examples
-
-      iex> change_credential(credential)
-      %Ecto.Changeset{source: %Credential{}}
-
-  """
   def change_credential(%Credential{} = credential) do
     Credential.changeset(credential, %{})
   end

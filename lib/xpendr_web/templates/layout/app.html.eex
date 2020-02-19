@@ -14,6 +14,7 @@
         <a href="<%= Routes.page_path(@conn, :index) %>" class="phx-logo">
           <h1>Xpendr</h1>
         </a>
+        <%= @current_user.username %>
       </section>
     </header>
     <main role="main" class="container">

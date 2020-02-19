@@ -76,7 +76,7 @@ defmodule Xpendr.Finance do
     |> Repo.preload(wallet: :user)
   end
 
-  def create_transaction(_user_id, attrs \\ %{}) do
+  def create_transaction(_wallet_id, attrs \\ %{}) do
     %Transaction{}
     |> Transaction.changeset(attrs)
     |> Repo.insert()
@@ -92,8 +92,8 @@ defmodule Xpendr.Finance do
 
         {:ok, transaction}
 
-      _ ->
-        nil
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:error, changeset}
     end
   end
 

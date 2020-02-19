@@ -6,7 +6,7 @@ defmodule XpendrWeb.TransactionView do
   end
 
   def transaction_select(form, field) do
-    select(form, field, transaction_types)
+    select(form, field, transaction_types())
   end
 
   def transaction_types do

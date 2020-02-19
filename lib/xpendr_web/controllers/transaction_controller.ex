@@ -26,7 +26,7 @@ defmodule XpendrWeb.TransactionController do
         |> put_flash(:info, "Transaction created successfully.")
         |> redirect(to: Routes.transaction_path(conn, :show, transaction))
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
   end

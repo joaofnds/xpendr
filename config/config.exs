@@ -25,7 +25,7 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-config :xpendr, AuthMe.UserManager.Guardian,
+config :xpendr, XpendrWeb.SessionManager.Guardian,
   issuer: "xpendr",
   secret_key: "6RvsKPoivrkvdphi+jX/4+lbLD+BO5z5nu58vWCW98bCn3ZC/7SwUUi5WX+cFEZg"
 
