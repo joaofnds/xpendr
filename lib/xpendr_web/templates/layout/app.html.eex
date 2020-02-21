@@ -14,7 +14,9 @@
         <a href="<%= Routes.page_path(@conn, :index) %>" class="phx-logo">
           <h1>Xpendr</h1>
         </a>
-        <%= @current_user.username %>
+        <%= if @current_user do%>
+          <a href=<%= Routes.session_path(@conn, :logout) %>><%= @current_user.username %></a>
+        <% end %>
       </section>
     </header>
     <main role="main" class="container">
