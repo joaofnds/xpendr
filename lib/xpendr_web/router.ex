@@ -1,5 +1,6 @@
 defmodule XpendrWeb.Router do
   use XpendrWeb, :router
+  import XpendrWeb.SessionManager.Helper, only: [assign_user_to_conn: 2]
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -11,6 +12,7 @@ defmodule XpendrWeb.Router do
 
   pipeline :auth do
     plug XpendrWeb.SessionManager.Pipeline
+    plug :assign_user_to_conn
   end
 
   pipeline :ensure_auth do

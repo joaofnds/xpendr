@@ -22,7 +22,7 @@ defmodule XpendrWeb.SessionController do
 
   def logout(conn, _) do
     conn
-    |> Guardian.Plug.sign_out(Guardian, _opts = [])
+    |> Guardian.Plug.sign_out(SessionManager.Guardian, _opts = [])
     |> redirect(to: "/")
   end
 
