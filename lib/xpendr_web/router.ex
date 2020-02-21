@@ -22,6 +22,7 @@ defmodule XpendrWeb.Router do
 
     get "/", PageController, :index
 
+    resources "/users", UserController, only: [:new, :create]
     get "/login", SessionController, :new
     post "/login", SessionController, :login
     get "/logout", SessionController, :logout
@@ -30,7 +31,7 @@ defmodule XpendrWeb.Router do
   scope "/", XpendrWeb do
     pipe_through [:browser, :auth, :ensure_auth]
 
-    resources "/users", UserController
+    resources "/users", UserController, except: [:new, :create]
     resources "/wallets", WalletController
     resources "/transactions", TransactionController
   end

@@ -1,8 +1,7 @@
 defmodule Xpendr.Accounts.Credential do
   use Ecto.Schema
   import Ecto.Changeset
-  import Xpendr.Accounts.Auth
-  alias Xpendr.Accounts.{User}
+  alias Xpendr.Accounts.{User, Auth}
 
   schema "credentials" do
     field :password, :string
@@ -15,6 +14,6 @@ defmodule Xpendr.Accounts.Credential do
     credential
     |> cast(attrs, [:user_id, :password])
     |> validate_required([:user_id, :password])
-    |> put_password_hash()
+    |> Auth.put_password_hash()
   end
 end
