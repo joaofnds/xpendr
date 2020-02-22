@@ -10,6 +10,8 @@ defmodule Xpendr.Accounts do
     |> Repo.preload(:wallets)
   end
 
+  def get_user(id), do: Repo.get(User, id) |> Repo.preload(:wallets)
+
   def get_user!(id) do
     User
     |> Repo.get!(id)
@@ -30,8 +32,8 @@ defmodule Xpendr.Accounts do
           |> Map.put("user_id", user.id)
           |> create_credential()
           |> case do
-            {:ok, credential} ->
-              {:ok, credential}
+            {:ok, _credential} ->
+              user
 
             {:error, changeset} ->
               Repo.rollback(changeset)
