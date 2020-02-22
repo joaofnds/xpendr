@@ -35,4 +35,5 @@
 
 
 <span><%= link "Edit", to: Routes.user_path(@conn, :edit, @user) %></span>
-<span><%= link "Back", to: Routes.user_path(@conn, :index) %></span>
+<span><%= link "Back", to: Routes.user_path(@conn, :show, @current_user.id) %></span>
+<span><%= link "Delete", to: Routes.user_path(@conn, :delete, @current_user.id), method: :delete %></span>
