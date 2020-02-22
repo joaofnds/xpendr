@@ -1,5 +1,5 @@
 defmodule XpendrWeb.UserControllerTest do
-  use XpendrWeb.ConnCase
+  use XpendrWeb.ConnCase, async: true
 
   alias Xpendr.Accounts
 

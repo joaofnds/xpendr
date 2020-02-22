@@ -1,5 +1,5 @@
 defmodule XpendrWeb.PageControllerTest do
-  use XpendrWeb.ConnCase
+  use XpendrWeb.ConnCase, async: true
 
   test "GET /", %{conn: conn} do
     conn = get(conn, "/")

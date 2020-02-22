@@ -1,5 +1,5 @@
 defmodule Xpendr.FinanceTest do
-  use Xpendr.DataCase
+  use Xpendr.DataCase, async: true
 
   alias Xpendr.{Finance, Accounts}
 

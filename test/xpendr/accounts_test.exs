@@ -1,5 +1,5 @@
 defmodule Xpendr.AccountsTest do
-  use Xpendr.DataCase
+  use Xpendr.DataCase, async: true
   alias Xpendr.Accounts
   import Xpendr.TestHelpers.Password
 

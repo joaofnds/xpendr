@@ -1,5 +1,5 @@
 defmodule XpendrWeb.TransactionControllerTest do
-  use XpendrWeb.ConnCase
+  use XpendrWeb.ConnCase, async: true
 
   alias Xpendr.Finance
 
