@@ -1,13 +1,20 @@
 defmodule Xpendr.Factory do
   use ExMachina.Ecto, repo: Xpendr.Repo
 
-  alias Xpendr.Accounts.User
+  alias Xpendr.Accounts.{User, Credential}
   alias Xpendr.Finance.{Wallet, Transaction}
 
   def user_factory do
     %User{
       name: "John Doe",
       username: sequence("username")
+    }
+  end
+
+  def credential_factory do
+    %Credential{
+      user: build(:user),
+      password: "s0m3s3cr3tp4ssw04d"
     }
   end
 
