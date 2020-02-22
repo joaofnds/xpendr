@@ -3,6 +3,7 @@ defmodule XpendrWeb.UserController do
 
   alias Xpendr.Accounts
   alias Xpendr.Accounts.User
+  alias XpendrWeb.SessionManager
 
   def index(conn, _params) do
     users = Accounts.list_users()
@@ -16,9 +17,10 @@ defmodule XpendrWeb.UserController do
 
   def create(conn, %{"user" => user_and_password_params}) do
     case Accounts.create_user_with_credential(user_and_password_params) do
-      {:ok, user} ->
+      {:ok, %User{} = user} ->
         conn
         |> put_flash(:info, "User created successfully.")
+        |> SessionManager.Plug.authorize_connection(user)
         |> redirect(to: Routes.user_path(conn, :show, user))
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -56,7 +58,8 @@ defmodule XpendrWeb.UserController do
     {:ok, _user} = Accounts.delete_user(user)
 
     conn
+    |> Guardian.Plug.sign_out(XpendrWeb.SessionManager.Guardian, _opts = [])
     |> put_flash(:info, "User deleted successfully.")
-    |> redirect(to: Routes.user_path(conn, :index))
+    |> redirect(to: Routes.page_path(conn, :index))
   end
 end
