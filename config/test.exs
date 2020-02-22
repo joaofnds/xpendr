@@ -16,3 +16,6 @@ config :xpendr, XpendrWeb.Endpoint,
 
 # Print only warnings and errors during test
 config :logger, level: :warn
+
+# Lower cost of password encryption FOR TESTS ONLY.
+config :argon2_elixir, t_cost: 1, m_cost: 8
