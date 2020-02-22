@@ -1,6 +1,6 @@
 defmodule XpendrWeb.Router do
   use XpendrWeb, :router
-  import XpendrWeb.SessionManager.Helper, only: [assign_user_to_conn: 2]
+  alias XpendrWeb.SessionManager
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -12,11 +12,11 @@ defmodule XpendrWeb.Router do
 
   pipeline :auth do
     plug XpendrWeb.SessionManager.Pipeline
-    plug :assign_user_to_conn
+    plug SessionManager.Plug.AssignUser
   end
 
   pipeline :ensure_auth do
-    plug Guardian.Plug.EnsureAuthenticated
+    plug SessionManager.Plug.EnsureAuthenticated
   end
 
   scope "/", XpendrWeb do
@@ -33,7 +33,7 @@ defmodule XpendrWeb.Router do
   scope "/", XpendrWeb do
     pipe_through [:browser, :auth, :ensure_auth]
 
-    resources "/users", UserController, except: [:new, :create]
+    resources "/users", UserController, except: [:index, :new, :create]
     resources "/wallets", WalletController
     resources "/transactions", TransactionController
   end
