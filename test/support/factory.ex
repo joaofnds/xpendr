@@ -30,7 +30,7 @@ defmodule Xpendr.Factory do
   def transaction_factory do
     %Transaction{
       wallet: build(:wallet),
-      type: sequence(:type, [Transaction.types()]),
+      type: sequence(:type, Map.values(Transaction.types())),
       amount: 10_00,
       description: "some description"
     }

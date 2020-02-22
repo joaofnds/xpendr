@@ -16,6 +16,7 @@ defmodule XpendrWeb.ConnCase do
   """
 
   use ExUnit.CaseTemplate
+  alias XpendrWeb.SessionManager
 
   using do
     quote do
@@ -36,6 +37,19 @@ defmodule XpendrWeb.ConnCase do
       Ecto.Adapters.SQL.Sandbox.mode(Xpendr.Repo, {:shared, self()})
     end
 
-    {:ok, conn: Phoenix.ConnTest.build_conn()}
+    user =
+      cond do
+        tags[:as_user] -> Xpendr.Factory.build(:user)
+        tags[:as_inserted_user] -> Xpendr.Factory.insert(:user)
+        true -> nil
+      end
+
+    {:ok, token, _} = SessionManager.Guardian.encode_and_sign(user, %{}, token_type: :access)
+
+    conn =
+      Phoenix.ConnTest.build_conn()
+      |> Plug.Conn.put_req_header("authorization", "bearer: " <> token)
+
+    {:ok, conn: conn, user: user}
   end
 end
