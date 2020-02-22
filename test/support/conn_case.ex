@@ -44,11 +44,9 @@ defmodule XpendrWeb.ConnCase do
         true -> nil
       end
 
-    {:ok, token, _} = SessionManager.Guardian.encode_and_sign(user, %{}, token_type: :access)
-
     conn =
       Phoenix.ConnTest.build_conn()
-      |> Plug.Conn.put_req_header("authorization", "bearer: " <> token)
+      |> XpendrWeb.SessionManager.Plug.authorize_connection(user)
 
     {:ok, conn: conn, user: user}
   end
