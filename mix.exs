@@ -47,7 +47,8 @@ defmodule Xpendr.MixProject do
       {:dialyxir, "~> 1.0.0-rc.7", only: :dev, runtime: false},
       {:credo, "~> 1.2", only: :dev, runtime: false},
       {:guardian, "~> 1.2"},
-      {:argon2_elixir, "~> 2.0"}
+      {:argon2_elixir, "~> 2.0"},
+      {:canary, "~> 1.1"}
     ]
   end
 
