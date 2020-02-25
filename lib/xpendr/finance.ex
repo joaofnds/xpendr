@@ -2,27 +2,27 @@ defmodule Xpendr.Finance do
   import Ecto.Query
 
   alias Xpendr.Repo
+  alias Xpendr.Accounts.User
   alias Xpendr.Finance.Wallet
 
-  def user_wallets_query(user_id) do
-    where(Wallet, user_id: ^user_id)
-  end
+  defp wallet_preloads(query), do: Repo.preload(query, [:user, :transactions])
 
   def wallet_transactions(wallet_id) do
     where(Transaction, wallet_id: ^wallet_id)
   end
 
   def user_wallets(user_id) do
-    user_wallets_query(user_id)
+    Wallet
+    |> where(user_id: ^user_id)
     |> Repo.all()
-    |> Repo.preload([:user, :transactions])
+    |> wallet_preloads()
   end
 
-  def get_wallet!(user_id, wallet_id) do
+  def get_user_wallet!(%User{id: user_id}, wallet_id) do
     Wallet
-    |> Ecto.Query.where(user_id: ^user_id, id: ^wallet_id)
+    |> where(user_id: ^user_id, id: ^wallet_id)
     |> Repo.one!()
-    |> Repo.preload([:user, :transactions])
+    |> wallet_preloads()
   end
 
   def create_wallet(attrs \\ %{}) do
@@ -59,6 +59,8 @@ defmodule Xpendr.Finance do
 
   alias Xpendr.Finance.Transaction
 
+  defp transaction_preloads(query), do: Repo.preload(query, wallet: :user)
+
   def list_transactions(user_id) do
     from(w in Wallet,
       join: t in Transaction,
@@ -67,16 +69,16 @@ defmodule Xpendr.Finance do
       select: t
     )
     |> Repo.all()
-    |> Repo.preload(wallet: :user)
+    |> transaction_preloads()
   end
 
   def get_transaction!(id) do
     Transaction
     |> Repo.get!(id)
-    |> Repo.preload(wallet: :user)
+    |> transaction_preloads()
   end
 
-  def create_transaction(_wallet_id, attrs \\ %{}) do
+  def create_transaction(attrs \\ %{}) do
     %Transaction{}
     |> Transaction.changeset(attrs)
     |> Repo.insert()
