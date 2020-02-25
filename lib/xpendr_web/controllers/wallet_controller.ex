@@ -5,6 +5,8 @@ defmodule XpendrWeb.WalletController do
   alias Xpendr.Finance.Wallet
 
   plug :load_and_authorize_resource, model: Wallet, preload: [:user, :transactions]
+  plug :halt_not_found, key: :wallet, except: [:index, :new, :create]
+  plug :halt_unauthorized
 
   def index(conn, _params) do
     user = conn.assigns.current_user

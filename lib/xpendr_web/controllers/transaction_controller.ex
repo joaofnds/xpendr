@@ -5,7 +5,9 @@ defmodule XpendrWeb.TransactionController do
   alias Xpendr.Finance.Transaction
 
   plug :load_and_authorize_resource, model: Transaction, preload: [wallet: :user]
-    user = conn.assigns.current_user
+  plug :halt_not_found, key: :transaction, except: [:index, :new, :create]
+  plug :halt_unauthorized
+
   def index(%{assigns: %{current_user: user}} = conn, _params) do
     transactions = Finance.list_transactions(user.id)
     render(conn, "index.html", transactions: transactions)

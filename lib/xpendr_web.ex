@@ -24,6 +24,8 @@ defmodule XpendrWeb do
       import Plug.Conn
       import XpendrWeb.Gettext
       import Canary.Plugs
+      import XpendrWeb.SessionManager.Plug, only: [halt_unauthorized: 2, halt_not_found: 2]
+
       alias XpendrWeb.Router.Helpers, as: Routes
     end
   end

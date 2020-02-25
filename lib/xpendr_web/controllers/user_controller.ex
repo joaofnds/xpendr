@@ -6,6 +6,7 @@ defmodule XpendrWeb.UserController do
   alias XpendrWeb.SessionManager
 
   plug :load_and_authorize_resource, model: User, except: [:index, :new, :create]
+  plug :halt_unauthorized
 
   def index(conn, _params) do
     users = Accounts.list_users()
