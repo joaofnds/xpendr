@@ -1,8 +1,6 @@
 defmodule XpendrWeb.TransactionControllerTest do
   use XpendrWeb.ConnCase, async: true
 
-  alias Xpendr.Finance
-
   @create_attrs %{amount: 42, description: "some description", type: "income"}
   @update_attrs %{amount: 43, description: "some updated description", type: "expense"}
   @invalid_attrs %{amount: nil, description: nil, type: nil}
@@ -25,17 +23,10 @@ defmodule XpendrWeb.TransactionControllerTest do
 
   @tag :as_inserted_user
   describe "create transaction" do
-    test "redirects to show when data is valid", %{conn: conn} do
-      conn =
-        post(
-          conn,
-          Routes.transaction_path(conn, :create),
-          transaction:
-            Map.merge(
-              @create_attrs,
-              %{wallet_id: insert(:wallet).id}
-            )
-        )
+    test "redirects to show when data is valid", %{conn: conn, user: user} do
+      wallet = insert(:wallet, user: user)
+      transaction = Map.merge(@create_attrs, %{wallet_id: wallet.id})
+      conn = post(conn, Routes.transaction_path(conn, :create), transaction: transaction)
 
       assert %{id: id} = redirected_params(conn)
       assert redirected_to(conn) == Routes.transaction_path(conn, :show, id)
@@ -44,7 +35,7 @@ defmodule XpendrWeb.TransactionControllerTest do
       assert html_response(conn, 200) =~ "Show Transaction"
     end
 
-    @tag :skip
+    @tag :as_inserted_user
     test "renders errors when data is invalid", %{conn: conn} do
       conn = post(conn, Routes.transaction_path(conn, :create), transaction: @invalid_attrs)
       assert html_response(conn, 200) =~ "New Transaction"
@@ -95,9 +86,8 @@ defmodule XpendrWeb.TransactionControllerTest do
       conn = delete(conn, Routes.transaction_path(conn, :delete, transaction))
       assert redirected_to(conn) == Routes.wallet_path(conn, :show, transaction.wallet_id)
 
-      assert_error_sent 404, fn ->
-        get(conn, Routes.transaction_path(conn, :show, transaction))
-      end
+      conn = get(conn, Routes.transaction_path(conn, :show, transaction))
+      assert response(conn, 404) =~ ""
     end
   end
 

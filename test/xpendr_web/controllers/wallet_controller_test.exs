@@ -74,17 +74,17 @@ defmodule XpendrWeb.WalletControllerTest do
     end
   end
 
+  @tag :as_inserted_user
   describe "delete wallet" do
     setup [:create_wallet]
 
-    @tag :as_inserted_user
     test "deletes chosen wallet", %{conn: conn, wallet: wallet} do
       conn = delete(conn, Routes.wallet_path(conn, :delete, wallet))
       assert redirected_to(conn) == Routes.wallet_path(conn, :index)
 
-      assert_error_sent 404, fn ->
-        get(conn, Routes.wallet_path(conn, :show, wallet))
-      end
+      assert nil == Xpendr.Repo.get(Xpendr.Finance.Wallet, wallet.id)
+      conn = get(conn, Routes.wallet_path(conn, :show, wallet))
+      assert response(conn, 404) =~ ""
     end
   end
 

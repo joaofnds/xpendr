@@ -16,7 +16,6 @@ defmodule XpendrWeb.ConnCase do
   """
 
   use ExUnit.CaseTemplate
-  alias XpendrWeb.SessionManager
 
   using do
     quote do

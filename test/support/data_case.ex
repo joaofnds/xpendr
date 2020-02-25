@@ -24,6 +24,7 @@ defmodule Xpendr.DataCase do
       import Ecto.Changeset
       import Ecto.Query
       import Xpendr.DataCase
+      import Xpendr.Factory
     end
   end
 
