@@ -4,6 +4,8 @@ defmodule XpendrWeb.WalletController do
   alias Xpendr.Finance
   alias Xpendr.Finance.Wallet
 
+  plug :load_and_authorize_resource, model: Wallet, preload: [:user, :transactions]
+
   def index(conn, _params) do
     user = conn.assigns.current_user
     wallets = Finance.user_wallets(user.id)
@@ -15,9 +17,7 @@ defmodule XpendrWeb.WalletController do
     render(conn, "new.html", changeset: changeset)
   end
 
-  def create(conn, %{"wallet" => wallet_params}) do
-    user = conn.assigns.current_user
-
+  def create(%{assigns: %{current_user: user}} = conn, %{"wallet" => wallet_params}) do
     wallet_params
     |> Map.put("user_id", user.id)
     |> Finance.create_wallet()
@@ -32,23 +32,18 @@ defmodule XpendrWeb.WalletController do
     end
   end
 
-  def show(conn, %{"id" => wallet_id}) do
-    user = conn.assigns.current_user
-    wallet = Finance.get_wallet!(user.id, wallet_id)
+  def show(%Plug.Conn{assigns: %{wallet: wallet}} = conn, _) do
     render(conn, "show.html", wallet: wallet)
   end
 
-  def edit(conn, %{"id" => id}) do
-    user = conn.assigns.current_user
-    wallet = Finance.get_wallet!(user.id, id)
+  def edit(%Plug.Conn{assigns: %{wallet: wallet}} = conn, _) do
     changeset = Finance.change_wallet(wallet)
     render(conn, "edit.html", wallet: wallet, changeset: changeset)
   end
 
-  def update(conn, %{"id" => id, "wallet" => wallet_params}) do
-    user = conn.assigns.current_user
-    wallet = Finance.get_wallet!(user.id, id)
-
+  def update(%Plug.Conn{assigns: %{wallet: wallet}} = conn, %{
+        "wallet" => wallet_params
+      }) do
     case Finance.update_wallet(wallet, wallet_params) do
       {:ok, wallet} ->
         conn
@@ -60,9 +55,7 @@ defmodule XpendrWeb.WalletController do
     end
   end
 
-  def delete(conn, %{"id" => id}) do
-    user = conn.assigns.current_user
-    wallet = Finance.get_wallet!(user.id, id)
+  def delete(%Plug.Conn{assigns: %{wallet: wallet}} = conn, _) do
     {:ok, _wallet} = Finance.delete_wallet(wallet)
 
     conn

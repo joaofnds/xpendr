@@ -23,6 +23,7 @@ defmodule XpendrWeb do
 
       import Plug.Conn
       import XpendrWeb.Gettext
+      import Canary.Plugs
       alias XpendrWeb.Router.Helpers, as: Routes
     end
   end
