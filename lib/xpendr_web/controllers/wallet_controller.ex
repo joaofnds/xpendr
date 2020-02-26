@@ -4,7 +4,7 @@ defmodule XpendrWeb.WalletController do
   alias Xpendr.Finance
   alias Xpendr.Finance.Wallet
 
-  plug :load_and_authorize_resource, model: Wallet, preload: [:user, :transactions]
+  plug :load_and_authorize_resource, model: Wallet, preload: Finance.wallet_preloads()
   plug :halt_not_found, key: :wallet, except: [:index, :new, :create]
   plug :halt_unauthorized
 

@@ -5,7 +5,10 @@ defmodule Xpendr.Finance do
   alias Xpendr.Accounts.User
   alias Xpendr.Finance.Wallet
 
-  defp wallet_preloads(query), do: Repo.preload(query, [:user, :transactions])
+  @wallet_preloads [:user, [transactions: :wallet]]
+  def wallet_preloads, do: @wallet_preloads
+
+  defp preload_wallet(query), do: Repo.preload(query, preload: wallet_preloads())
 
   def wallet_transactions(wallet_id) do
     where(Transaction, wallet_id: ^wallet_id)
@@ -15,14 +18,14 @@ defmodule Xpendr.Finance do
     Wallet
     |> where(user_id: ^user_id)
     |> Repo.all()
-    |> wallet_preloads()
+    |> preload_wallet()
   end
 
   def get_user_wallet!(%User{id: user_id}, wallet_id) do
     Wallet
     |> where(user_id: ^user_id, id: ^wallet_id)
     |> Repo.one!()
-    |> wallet_preloads()
+    |> preload_wallet()
   end
 
   def create_wallet(attrs \\ %{}) do
