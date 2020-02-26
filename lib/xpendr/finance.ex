@@ -8,7 +8,7 @@ defmodule Xpendr.Finance do
   @wallet_preloads [:user, [transactions: :wallet]]
   def wallet_preloads, do: @wallet_preloads
 
-  defp preload_wallet(query), do: Repo.preload(query, preload: wallet_preloads())
+  defp preload_wallet(query), do: Repo.preload(query, wallet_preloads())
 
   def wallet_transactions(wallet_id) do
     where(Transaction, wallet_id: ^wallet_id)
