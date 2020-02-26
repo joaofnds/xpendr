@@ -1,0 +1,14 @@
+<strong><%= @wallet.name %></strong>
+<p>
+  Balance:
+  <span><%= @wallet.balance %></span>
+</p>
+<%= if @wallet.description do %>
+  <span><%= @wallet.description %></span>
+<% end %>
+
+<p>
+  <span><%= link "Show", to: Routes.wallet_path(@conn, :show, @wallet) %></span>
+  <span><%= link "Edit", to: Routes.wallet_path(@conn, :edit, @wallet) %></span>
+  <span><%= link "Delete", to: Routes.wallet_path(@conn, :delete, @wallet), method: :delete, data: [confirm: "Are you sure?"] %></span>
+</p>

@@ -1,0 +1,16 @@
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Balance</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= for wallet <- @wallets do %>
+        <tr>
+          <td><a href="<%= Routes.wallet_path(@conn, :show, wallet.id) %>"><%= wallet.name %></a></td>
+          <td><%= wallet.balance %></td>
+        </tr>
+        <% end %>
+  </tbody>
+</table>

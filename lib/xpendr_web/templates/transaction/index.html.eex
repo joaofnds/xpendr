@@ -1,32 +1,5 @@
 <h1>Listing Transactions</h1>
 
-<table>
-  <thead>
-    <tr>
-      <th>Wallet</th>
-      <th>Type</th>
-      <th>Amount</th>
-      <th>Description</th>
-
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-<%= for transaction <- @transactions do %>
-    <tr>
-      <td><%= wallet_name(transaction) %></td>
-      <td><%= transaction.type %></td>
-      <td><%= transaction.amount %></td>
-      <td><%= transaction.description %></td>
-
-      <td>
-        <span><%= link "Show", to: Routes.transaction_path(@conn, :show, transaction) %></span>
-        <span><%= link "Edit", to: Routes.transaction_path(@conn, :edit, transaction) %></span>
-        <span><%= link "Delete", to: Routes.transaction_path(@conn, :delete, transaction), method: :delete, data: [confirm: "Are you sure?"] %></span>
-      </td>
-    </tr>
-<% end %>
-  </tbody>
-</table>
+<%= render_many @transactions, XpendrWeb.TransactionView, "_transaction.html", conn: @conn %>
 
 <span><%= link "New Transaction", to: Routes.transaction_path(@conn, :new) %></span>

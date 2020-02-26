@@ -1,7 +1,6 @@
 <h1>Show Wallet</h1>
 
 <ul>
-
   <li>
     <strong>Owner:</strong>
     <%= owner_name(@wallet) %>
@@ -21,35 +20,15 @@
     <strong>Description:</strong>
     <%= @wallet.description %>
   </li>
-
 </ul>
 
-<h2>Transactions</h2>
-<span><%= link "New Transaction", to: Routes.transaction_path(@conn, :new) %></span>
-<table>
-  <thead>
-    <tr>
-      <th>type</th>
-      <th>amount</th>
-      <th>date</th>
-      <th>actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <%= for transaction <- transactions(@wallet) do %>
-    <tr>
-      <td><%= transaction.type %></td>
-      <td><%= transaction.amount %></td>
-      <td><%= transaction.inserted_at %></td>
-      <td>
-        <span><%= link "Show", to: Routes.transaction_path(@conn, :show, transaction) %></span>
-        <span><%= link "Edit", to: Routes.transaction_path(@conn, :edit, transaction) %></span>
-        <span><%= link "Delete", to: Routes.transaction_path(@conn, :delete, transaction), method: :delete, data: [confirm: "Are you sure?"] %></span>
-      </td>
-    </tr>
-    <% end %>
-  </tbody>
-</table>
+<p>
+  <span><%= link "Edit", to: Routes.wallet_path(@conn, :edit, @wallet) %></span>
+  <span><%= link "Back", to: Routes.wallet_path(@conn, :index) %></span>
+</p>
 
-<span><%= link "Edit", to: Routes.wallet_path(@conn, :edit, @wallet) %></span>
-<span><%= link "Back", to: Routes.wallet_path(@conn, :index) %></span>
+<h2>Transactions</h2>
+
+<span><%= link "New Transaction", to: Routes.transaction_path(@conn, :new) %></span>
+
+<%= render_many @wallet.transactions, XpendrWeb.TransactionView, "_transaction.html", conn: @conn %>
