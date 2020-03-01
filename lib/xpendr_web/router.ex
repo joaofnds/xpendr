@@ -2,6 +2,8 @@ defmodule XpendrWeb.Router do
   use XpendrWeb, :router
   alias XpendrWeb.SessionManager
 
+  @env Application.get_env(:xpendr, :env)
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
