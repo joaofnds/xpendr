@@ -53,6 +53,7 @@ defmodule XpendrWeb do
       use Phoenix.Router
       import Plug.Conn
       import Phoenix.Controller
+      import XpendrWeb.Absinthe, only: [put_absinthe_context: 2]
     end
   end
 
