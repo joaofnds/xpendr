@@ -35,20 +35,6 @@ module.exports = (env, options) => ({
           'css-loader',
           'postcss-loader'
         ]
-      },
-      {
-        test: /\.elm$/,
-        exclude: [/elm-stuff/, /node_modules/],
-        use: {
-          loader: 'elm-webpack-loader',
-          options: {
-            cwd: path.resolve(__dirname, 'elm'),
-            pathToElm: path.resolve(__dirname, 'node_modules', '.bin', 'elm'),
-            debug: options.mode === 'development',
-            verbose: options.mode === 'development',
-            optimize: options.mode !== 'development'
-          }
-        }
       }
     ]
   },
