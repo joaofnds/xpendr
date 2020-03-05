@@ -1,0 +1,24 @@
+<section class="flex flex-rows wallet-card my-4 bg-gray-600 mx-2 rounded">
+  <div class="flex-1 flex p-2 rounded">
+    <label class="w-1/6 bg-red-500 rounded flex items-center">
+      <a class="text-white mx-auto text-3xl">&minus;</a>
+    </label>
+
+    <label class="flex-1 flex flex-col justify-around items-center">
+      <strong>
+        <%= link @wallet.name,
+              to: Routes.wallet_path(@conn, :show, @wallet),
+              class: "text-xl text-black" %>
+      </strong>
+      <span class="mx-auto"><%= format_money @wallet.balance %></span>
+    </label>
+
+    <label class="w-1/6 bg-green-500 rounded flex items-center">
+      <a class="text-white mx-auto text-3xl">&plus;</a>
+    </label>
+  </div>
+
+  <%= if @wallet.description do %>
+    <span><%= @wallet.description %></span>
+  <% end %>
+</section>

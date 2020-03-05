@@ -131,4 +131,19 @@ defmodule Xpendr.Finance do
   def change_transaction(%Transaction{} = transaction) do
     Transaction.changeset(transaction, %{})
   end
+
+  def format_money(amount) do
+    amount
+    |> format_amount()
+    |> money_with_symbol()
+  end
+
+  def format_amount(amount) when is_integer(amount) do
+    :erlang.float_to_binary(amount / 100.0, decimals: 2)
+    |> to_string()
+  end
+
+  def money_with_symbol(amount) when is_binary(amount) do
+    "R$ " <> amount
+  end
 end

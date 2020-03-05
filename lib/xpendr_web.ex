@@ -45,6 +45,7 @@ defmodule XpendrWeb do
       import XpendrWeb.ErrorHelpers
       import XpendrWeb.Gettext
       alias XpendrWeb.Router.Helpers, as: Routes
+      import Xpendr.Finance, only: [format_money: 1]
     end
   end
 
