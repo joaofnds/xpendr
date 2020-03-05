@@ -28,7 +28,6 @@ defmodule XpendrWeb.SessionController do
 
   defp login_reply({:ok, user}, conn) do
     conn
-    |> put_flash(:info, "Welcome Back!")
     |> Guardian.Plug.sign_in(SessionManager.Guardian, user)
     |> redirect(to: "/")
   end

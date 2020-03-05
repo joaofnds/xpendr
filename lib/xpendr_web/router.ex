@@ -1,6 +1,9 @@
 defmodule XpendrWeb.Router do
   use XpendrWeb, :router
+
   alias XpendrWeb.SessionManager
+
+  @env Application.get_env(:xpendr, :env)
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -10,6 +13,11 @@ defmodule XpendrWeb.Router do
     plug :put_secure_browser_headers
   end
 
+  pipeline :api do
+    plug :accepts, ["json"]
+    plug :fetch_session
+  end
+
   pipeline :auth do
     plug XpendrWeb.SessionManager.Pipeline
     plug SessionManager.Plug.AssignUser
@@ -17,6 +25,10 @@ defmodule XpendrWeb.Router do
 
   pipeline :ensure_auth do
     plug SessionManager.Plug.EnsureAuthenticated
+  end
+
+  pipeline :graphql do
+    plug :put_absinthe_context
   end
 
   scope "/", XpendrWeb do
@@ -36,5 +48,15 @@ defmodule XpendrWeb.Router do
     resources "/users", UserController, except: [:index, :new, :create]
     resources "/wallets", WalletController
     resources "/transactions", TransactionController
+  end
+
+  scope "/api" do
+    pipe_through [:api, :auth, :ensure_auth, :graphql]
+
+    if @env == :dev do
+      forward "/graphiql", Absinthe.Plug.GraphiQL, schema: XpendrWeb.Schema
+    end
+
+    forward "/", Absinthe.Plug, schema: XpendrWeb.Schema
   end
 end

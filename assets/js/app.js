@@ -1,7 +1,7 @@
 import "../css/app.css"
-import { Elm } from "../elm/src/Xpendr.elm"
+import { Application } from "stimulus"
+import { definitionsFromContext } from "stimulus/webpack-helpers"
 
-const ElmMainElement = document.getElementById('elm-main')
-if (ElmMainElement) {
-  Elm.Xpendr.init({ node: ElmMainElement })
-}
+const application = Application.start()
+const context = require.context("./controllers", true, /\.js$/)
+application.load(definitionsFromContext(context))

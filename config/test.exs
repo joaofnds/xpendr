@@ -1,5 +1,7 @@
 use Mix.Config
 
+config :xpendr, :env, :test
+
 # Configure your database
 config :xpendr, Xpendr.Repo,
   username: "postgres",

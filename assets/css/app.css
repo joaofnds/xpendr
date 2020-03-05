@@ -1,5 +1,49 @@
-/* This file is for your main application css. */
-
 @tailwind base;
 @tailwind components;
+
+body {
+  max-width: 640px;
+  height: 100vh;
+  margin: auto;
+}
+
+form input {
+  @apply shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight;
+}
+
+form input:focus {
+  @apply outline-none shadow-outline;
+}
+
+form label {
+  @apply font-bold
+}
+
+a {
+  @apply text-blue-500;
+}
+
+.dropdown-item-container {
+  @apply absolute right-0 shadow-xl bg-gray-300 rounded-lg;
+  display: none;
+}
+
+.dropdown:hover .dropdown-item-container,
+.dropdown .dropdown-item-container:hover {
+  display: block;
+}
+
+.dropdown-item-container .dropdown-item {
+  @apply block py-2 px-4 text-right text-gray-800;
+}
+
+.dropdown-item-container .dropdown-item:hover {
+  @apply bg-gray-600 text-gray-300 rounded-lg;
+}
+
+.wallet-card {
+  max-height: 160px;
+  height: 16vh;
+}
+
 @tailwind utilities;

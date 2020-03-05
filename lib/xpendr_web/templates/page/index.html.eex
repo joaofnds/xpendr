@@ -1,5 +1,5 @@
 <%= if @current_user do%>
-  <%= render_many @current_user.wallets, XpendrWeb.WalletView, "_wallet.html", conn: @conn %>
+  <%= render_many @current_user.wallets, XpendrWeb.WalletView, "_wallet_card.html", conn: @conn %>
 <% else %>
   <a href=<%= Routes.user_path(@conn, :new) %>>create user</a> or
   <a href=<%= Routes.session_path(@conn, :login) %>>login</a>

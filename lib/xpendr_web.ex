@@ -45,6 +45,7 @@ defmodule XpendrWeb do
       import XpendrWeb.ErrorHelpers
       import XpendrWeb.Gettext
       alias XpendrWeb.Router.Helpers, as: Routes
+      import Xpendr.Finance, only: [format_money: 1]
     end
   end
 
@@ -53,6 +54,7 @@ defmodule XpendrWeb do
       use Phoenix.Router
       import Plug.Conn
       import Phoenix.Controller
+      import XpendrWeb.Absinthe, only: [put_absinthe_context: 2]
     end
   end
 
